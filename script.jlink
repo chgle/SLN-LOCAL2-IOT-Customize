@@ -1,0 +1,7 @@
+ExitOnError 1
+r
+h
+loadfile "C:\Users\nxa14582\Documents\MCUXpressoIDE_11.3.0_5222\workspace\RT106S\Aver\sln_local2_iot_local_demo\Debug\sln_local2_iot_local_demo.hex"
+qc
+
+qc
