@@ -687,10 +687,11 @@ void local_voice_task(void *arg)
 
             // only English CMD
             cmdString = get_cmd_string(ASR_ENGLISH, appAsrShellCommands.demo);
-            if(appAsrShellCommands.demo == ASR_CMD_CUSTOMER) //B36932
-            	set_CMD_engine(&g_asrControl, ASR_ENGLISH, appAsrShellCommands.demo >> (MAX_GROUPS-3), cmdString);
-            else
+            if(appAsrShellCommands.demo < ASR_CMD_CUSTOMER) //B36932 
             	set_CMD_engine(&g_asrControl, ASR_ENGLISH, appAsrShellCommands.demo, cmdString);
+            else //b36932 revise index for customize ASR model group
+				set_CMD_engine(&g_asrControl, ASR_ENGLISH, appAsrShellCommands.demo >> (MAX_GROUPS-3), cmdString);
+            	
             oob_demo_control.language = ASR_ENGLISH;
 
             asrEvent = ASR_SESSION_STARTED;
@@ -709,21 +710,11 @@ void local_voice_task(void *arg)
                 {
                     if (asr_get_string_by_id(pInfWW, g_asrControl.result.keywordID[0]) != NULL)
                     {
-                    	//char *test;
-                    	//char ch[20], i;
                         asrEvent = ASR_SESSION_STARTED;
                         print_asr_session(asrEvent);
                         configPRINTF(("[ASR] Wake Word: %s(%d) - MapID(%d)\r\n",
                                       asr_get_string_by_id(pInfWW, g_asrControl.result.keywordID[0]),
                                       g_asrControl.result.keywordID[0], g_asrControl.result.cmdMapID));
-                        //test = asr_get_string_by_id(pInfWW, g_asrControl.result.keywordID[0]); //B36932
-                        //for(i=0; (test+i)!=0 && i<20 ; i++)
-                        //{
-                        //	ch[i] = test+i;
-                        //}
-                        //configPRINTF(("[ASR] Wake Word: %s(%d) - MapID(%d)\r\n",
-                        //              ch,
-                        //              g_asrControl.result.keywordID[0], g_asrControl.result.cmdMapID));
                         if (appAsrShellCommands.cmdresults == ASR_CMD_RES_ON)
                         {
                             configPRINTF(("      Trust: %d, SGDiff: %d\r\n", g_asrControl.result.trustScore,
@@ -748,7 +739,7 @@ void local_voice_task(void *arg)
                             cmdString = cmd_dialogic_1_en;
                             set_CMD_engine(&g_asrControl, ASR_ENGLISH, ASR_CMD_DIALOGIC_1, cmdString);
                         }
-                        else if (appAsrShellCommands.demo == ASR_CMD_CUSTOMER)	//B36932
+                        else if (appAsrShellCommands.demo == ASR_CMD_CUSTOMER)	//B36932 setup ASR command engine to customize ASR group
                         {
                         	cmdString = get_cmd_string(pInfWW->iWhoAmI_lang, appAsrShellCommands.demo);
                         	set_CMD_engine(&g_asrControl, pInfWW->iWhoAmI_lang, appAsrShellCommands.demo >> (MAX_GROUPS-3), cmdString);
@@ -781,7 +772,6 @@ void local_voice_task(void *arg)
             {
                 if (asr_get_string_by_id(pInfCMD, g_asrControl.result.keywordID[1]) != NULL)
                 {
-                	char *test_cmd = asr_get_string_by_id(pInfCMD, g_asrControl.result.keywordID[1]);//B36932
                     configPRINTF(("[ASR] Command: %s(%d) - MapID(%d)\r\n",
                                   asr_get_string_by_id(pInfCMD, g_asrControl.result.keywordID[1]),
                                   g_asrControl.result.keywordID[1], g_asrControl.result.cmdMapID));
@@ -805,12 +795,14 @@ void local_voice_task(void *arg)
                         asrEvent = ASR_SESSION_ENDED;
                     }
 
-                    //B36932
+                    //B36932 pInfCMD->iWhoAmI_inf is index to ASR Model internal group
+					//It is not match with customize ASR model structure
+					//So we have to revise this index to when model has changed to customize model.
                     asr_inference_t _iWhoAmI_inf;
-                    if(appAsrShellCommands.demo == ASR_CMD_CUSTOMER)
-                    	_iWhoAmI_inf = ASR_CMD_CUSTOMER;
-                    else
+                    if(appAsrShellCommands.demo < ASR_CMD_CUSTOMER)
                     	_iWhoAmI_inf = pInfCMD->iWhoAmI_inf;
+                    else
+                    	_iWhoAmI_inf = appAsrShellCommands.demo ;
 
                     // Notify App Task Command Detected
                     //B36932 switch (pInfCMD->iWhoAmI_inf)
