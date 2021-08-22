@@ -445,7 +445,7 @@ char **get_cmd_string(asr_language_t asrLang, asr_inference_t infCMDType)
                 retString = cmd_led_en;
             else if (infCMDType == ASR_CMD_DIALOGIC_1)
                 retString = cmd_dialogic_1_en;
-            else if (infCMDType == ASR_CMD_CUSTOMER)	//b36932 return customer command string
+            else if (infCMDType == ASR_CMD_CUSTOMER)//b36932 return customer command string
                 retString = cmd_customer_en;
             break;
         case ASR_CHINESE:
@@ -457,8 +457,8 @@ char **get_cmd_string(asr_language_t asrLang, asr_inference_t infCMDType)
                 retString = cmd_audio_zh;
             else if (infCMDType == ASR_CMD_WASH)
                 retString = cmd_wash_zh;
-            else if (infCMDType == ASR_CMD_CUSTOMER)	//b36932 return customer command string
-                retString = cmd_customer_zh;
+            else if (infCMDType == ASR_CMD_CUSTOMER)//return customer command string
+            	retString = cmd_customer_zh;
             break;
         case ASR_GERMAN:
             if (infCMDType == ASR_CMD_IOT)
@@ -512,39 +512,44 @@ void initialize_asr(void)
 		lang[2]   = langShell & ASR_GERMAN;  // third
 		lang[3]   = langShell & ASR_FRENCH;  // fourth
 
-    // NULL to ensure the end of linked list.
-    g_asrControl.langModel    = NULL;
-    g_asrControl.infEngineWW  = NULL;
-    g_asrControl.infEngineCMD = NULL;
+		// NULL to ensure the end of linked list.
+		g_asrControl.langModel    = NULL;
+		g_asrControl.infEngineWW  = NULL;
+		g_asrControl.infEngineCMD = NULL;
 
-#if MULTILINGUAL
-    // install multilingual
-    install_language(&g_asrControl, &g_asrLangModel[3], lang[3], (unsigned char *)&oob_demo_fr_begin, NUM_GROUPS);
-    install_language(&g_asrControl, &g_asrLangModel[2], lang[2], (unsigned char *)&oob_demo_de_begin, NUM_GROUPS);
-    install_language(&g_asrControl, &g_asrLangModel[1], lang[1], (unsigned char *)&oob_demo_zh_begin, NUM_GROUPS);
-#endif
+	#if MULTILINGUAL
+		// install multilingual
+		install_language(&g_asrControl, &g_asrLangModel[3], lang[3], (unsigned char *)&oob_demo_fr_begin, NUM_GROUPS);
+		install_language(&g_asrControl, &g_asrLangModel[2], lang[2], (unsigned char *)&oob_demo_de_begin, NUM_GROUPS);
+		install_language(&g_asrControl, &g_asrLangModel[1], lang[1], (unsigned char *)&oob_demo_zh_begin, NUM_GROUPS);
+	#endif
 
-    install_language(&g_asrControl, &g_asrLangModel[0], lang[0], (unsigned char *)&oob_demo_en_begin, NUM_GROUPS_EN);
+		install_language(&g_asrControl, &g_asrLangModel[0], lang[0], (unsigned char *)&oob_demo_en_begin, NUM_GROUPS_EN);
 
-#if MULTILINGUAL
-    install_inference_engine(&g_asrControl, &g_asrInfWW[3], lang[3], ASR_WW, ww_fr, &g_memPoolWLang4[0],
-                             WAKE_WORD_MEMPOOL_SIZE); // ww language4
-    install_inference_engine(&g_asrControl, &g_asrInfWW[2], lang[2], ASR_WW, ww_de, &g_memPoolWLang3[0],
-                             WAKE_WORD_MEMPOOL_SIZE); // ww language3
-    install_inference_engine(&g_asrControl, &g_asrInfWW[1], lang[1], ASR_WW, ww_zh, &g_memPoolWLang2[0],
-                             ZH_WAKE_WORD_MEMPOOL_SIZE); // ww language2
-#endif
+	#if MULTILINGUAL
+		install_inference_engine(&g_asrControl, &g_asrInfWW[3], lang[3], ASR_WW, ww_fr, &g_memPoolWLang4[0],
+								 WAKE_WORD_MEMPOOL_SIZE); // ww language4
+		install_inference_engine(&g_asrControl, &g_asrInfWW[2], lang[2], ASR_WW, ww_de, &g_memPoolWLang3[0],
+								 WAKE_WORD_MEMPOOL_SIZE); // ww language3
+		install_inference_engine(&g_asrControl, &g_asrInfWW[1], lang[1], ASR_WW, ww_zh, &g_memPoolWLang2[0],
+								 ZH_WAKE_WORD_MEMPOOL_SIZE); // ww language2
+	#endif
 
-    install_inference_engine(&g_asrControl, &g_asrInfWW[0], lang[0], ASR_WW, ww_en, &g_memPoolWLang1[0],
-                             WAKE_WORD_MEMPOOL_SIZE); // ww language1
+		install_inference_engine(&g_asrControl, &g_asrInfWW[0], lang[0], ASR_WW, ww_en, &g_memPoolWLang1[0],
+								 WAKE_WORD_MEMPOOL_SIZE); // ww language1
 
-    // CMD inference engine will be reset with detected language after WW is detected
-    install_inference_engine(&g_asrControl, &g_asrInfCMD, ASR_ENGLISH, demoType, cmd_led_en, &g_memPoolCmd[0],
-                             COMMAND_MEMPOOL_SIZE); // commands, setting up with defaults
+		// CMD inference engine will be reset with detected language after WW is detected
+		install_inference_engine(&g_asrControl, &g_asrInfCMD, ASR_ENGLISH, demoType, cmd_led_en, &g_memPoolCmd[0],
+								 COMMAND_MEMPOOL_SIZE); // commands, setting up with defaults
+
+		// init
+		init_WW_engine(&g_asrControl, demoType);
+		init_CMD_engine(&g_asrControl, demoType);
+		oob_demo_control.ledCmd = UNDEFINED_COMMAND;
     }
     else
     {
-    	demoType = demoType >> (MAX_GROUPS-3); //B36932 re-index group point to cusotmer ASR model
+    	demoType = demoType >> (MAX_GROUPS-3); // re-index group point to cusotmer ASR model
 
         langShell = appAsrShellCommands.multilingual;
         lang[0]   = langShell & ASR_ENGLISH; // first language
@@ -557,36 +562,36 @@ void initialize_asr(void)
         g_asrControl.infEngineWW  = NULL;
         g_asrControl.infEngineCMD = NULL;
 
-#if MULTILINGUAL
+    #if MULTILINGUAL
         // install multilingual
-//        install_language(&g_asrControl, &g_asrLangModel[3], lang[3], (unsigned char *)&oob_demo_fr_begin, NUM_CUS_GROUPS);
-//        install_language(&g_asrControl, &g_asrLangModel[2], lang[2], (unsigned char *)&oob_demo_de_begin, NUM_CUS_GROUPS);
-        install_language(&g_asrControl, &g_asrLangModel[1], lang[1], (unsigned char *)&customer_demo_zh_begin, NUM_CUS_GROUPS); // 4 = 1 app + 1 base group + 1 wake word + 1 mapID
-#endif
+        //install_language(&g_asrControl, &g_asrLangModel[3], lang[3], (unsigned char *)&oob_demo_fr_begin, NUM_GROUPS);
+        //install_language(&g_asrControl, &g_asrLangModel[2], lang[2], (unsigned char *)&oob_demo_de_begin, NUM_GROUPS);
+        install_language(&g_asrControl, &g_asrLangModel[1], lang[1], (unsigned char *)&customer_demo_zh_begin, NUM_CUS_GROUPS);
+    #endif
 
         install_language(&g_asrControl, &g_asrLangModel[0], lang[0], (unsigned char *)&customer_demo_en_begin, NUM_CUS_GROUPS_EN);
 
-#if MULTILINGUAL
-//        install_inference_engine(&g_asrControl, &g_asrInfWW[3], lang[3], ASR_WW, ww_fr, &g_memPoolWLang4[0],
-//                             WAKE_WORD_MEMPOOL_SIZE); // ww language4
-//        install_inference_engine(&g_asrControl, &g_asrInfWW[2], lang[2], ASR_WW, ww_de, &g_memPoolWLang3[0],
-//                             WAKE_WORD_MEMPOOL_SIZE); // ww language3
+    #if MULTILINGUAL
+        //install_inference_engine(&g_asrControl, &g_asrInfWW[3], lang[3], ASR_WW, ww_fr, &g_memPoolWLang4[0],
+        //                         WAKE_WORD_MEMPOOL_SIZE); // ww language4
+        //install_inference_engine(&g_asrControl, &g_asrInfWW[2], lang[2], ASR_WW, ww_de, &g_memPoolWLang3[0],
+        //                         WAKE_WORD_MEMPOOL_SIZE); // ww language3
         install_inference_engine(&g_asrControl, &g_asrInfWW[1], lang[1], ASR_WW, ww_customer_zh, &g_memPoolWLang2[0],
-                             ZH_WAKE_WORD_MEMPOOL_SIZE); // ww language2
-#endif
+                                 ZH_WAKE_WORD_MEMPOOL_SIZE); // ww language2
+    #endif
 
         install_inference_engine(&g_asrControl, &g_asrInfWW[0], lang[0], ASR_WW, ww_customer_en, &g_memPoolWLang1[0],
-                             WAKE_WORD_MEMPOOL_SIZE); // ww language1
+                                 WAKE_WORD_MEMPOOL_SIZE); // ww language1
 
         // CMD inference engine will be reset with detected language after WW is detected
         install_inference_engine(&g_asrControl, &g_asrInfCMD, ASR_ENGLISH, demoType, cmd_customer_en, &g_memPoolCmd[0],
                                  COMMAND_MEMPOOL_SIZE); // commands, setting up with defaults
+
+        // init
+        init_WW_engine(&g_asrControl, demoType);
+        init_CMD_engine(&g_asrControl, demoType);
+        oob_demo_control.cmd = Customer_UNDEFINED_COMMAND;
     }
-    // init
-    init_WW_engine(&g_asrControl, demoType);
-    init_CMD_engine(&g_asrControl, demoType);
-    //oob_demo_control.ledCmd = UNDEFINED_COMMAND;
-    oob_demo_control.cmd = Customer_UNDEFINED_COMMAND;
 }
 
 void print_asr_session(int status)
@@ -630,7 +635,7 @@ void local_voice_task(void *arg)
 
     if (appAsrShellCommands.status != WRITE_SUCCESS)
     {
-        appAsrShellCommands.demo         = ASR_CMD_CUSTOMER;
+        appAsrShellCommands.demo         = ASR_CMD_LED;
         appAsrShellCommands.followup     = ASR_FOLLOWUP_OFF;
         appAsrShellCommands.multilingual = ASR_ENGLISH;
         appAsrShellCommands.mute         = ASR_MUTE_OFF;
@@ -687,11 +692,12 @@ void local_voice_task(void *arg)
 
             // only English CMD
             cmdString = get_cmd_string(ASR_ENGLISH, appAsrShellCommands.demo);
-            if(appAsrShellCommands.demo < ASR_CMD_CUSTOMER) //B36932 
-            	set_CMD_engine(&g_asrControl, ASR_ENGLISH, appAsrShellCommands.demo, cmdString);
+
+            if(appAsrShellCommands.demo < ASR_CMD_CUSTOMER) //B36932
+                set_CMD_engine(&g_asrControl, ASR_ENGLISH, appAsrShellCommands.demo, cmdString);
             else //b36932 revise index for customize ASR model group
-				set_CMD_engine(&g_asrControl, ASR_ENGLISH, appAsrShellCommands.demo >> (MAX_GROUPS-3), cmdString);
-            	
+                set_CMD_engine(&g_asrControl, ASR_ENGLISH, appAsrShellCommands.demo >> (MAX_GROUPS-3), cmdString);
+
             oob_demo_control.language = ASR_ENGLISH;
 
             asrEvent = ASR_SESSION_STARTED;
@@ -739,11 +745,12 @@ void local_voice_task(void *arg)
                             cmdString = cmd_dialogic_1_en;
                             set_CMD_engine(&g_asrControl, ASR_ENGLISH, ASR_CMD_DIALOGIC_1, cmdString);
                         }
-                        else if (appAsrShellCommands.demo == ASR_CMD_CUSTOMER)	//B36932 setup ASR command engine to customize ASR group
+                        else if (appAsrShellCommands.demo == ASR_CMD_CUSTOMER)//B36932 setup ASR command engine to customize ASR group
                         {
-                        	cmdString = get_cmd_string(pInfWW->iWhoAmI_lang, appAsrShellCommands.demo);
-                        	set_CMD_engine(&g_asrControl, pInfWW->iWhoAmI_lang, appAsrShellCommands.demo >> (MAX_GROUPS-3), cmdString);
+                           cmdString = get_cmd_string(pInfWW->iWhoAmI_lang, appAsrShellCommands.demo);
+                           set_CMD_engine(&g_asrControl, pInfWW->iWhoAmI_lang, appAsrShellCommands.demo >> (MAX_GROUPS-3), cmdString);
                         }
+
                         else
                         {
                             cmdString = get_cmd_string(pInfWW->iWhoAmI_lang, appAsrShellCommands.demo);
@@ -794,19 +801,17 @@ void local_voice_task(void *arg)
                     {
                         asrEvent = ASR_SESSION_ENDED;
                     }
-
-                    //B36932 pInfCMD->iWhoAmI_inf is index to ASR Model internal group
-					//It is not match with customize ASR model structure
-					//So we have to revise this index to when model has changed to customize model.
+                    //pInfCMD->iWhoAmI_inf is index to ASR Model internal group, It is not match with customize ASR model structure
+                    //So we have to revise this index to when model has changed to customize model.
                     asr_inference_t _iWhoAmI_inf;
                     if(appAsrShellCommands.demo < ASR_CMD_CUSTOMER)
-                    	_iWhoAmI_inf = pInfCMD->iWhoAmI_inf;
+                        _iWhoAmI_inf = pInfCMD->iWhoAmI_inf;
                     else
                     	_iWhoAmI_inf = appAsrShellCommands.demo ;
-
                     // Notify App Task Command Detected
-                    //B36932 switch (pInfCMD->iWhoAmI_inf)
                     switch (_iWhoAmI_inf ) //B36932
+                    // Notify App Task Command Detected
+                    //switch (pInfCMD->iWhoAmI_inf)
                     {
                         case ASR_CMD_LED:
                             oob_demo_control.ledCmd = g_asrControl.result.keywordID[1];

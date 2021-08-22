@@ -107,21 +107,8 @@ char *cmd_dialogic_2_timer_en[] = {"one minute",
                                    "three hours",
                                    "three hours"};
 
-//b36932 Customer voice command list
-char *ww_customer_en[] = {"Hey Aver","Hey Aver","Hey Aver","Hey Aver"};
+char *ww_customer_en[] = {"Hey, earth", "Hi, earth" };
 
-char *cmd_customer_en[] = {"go zoom meeting", "go teams meeting", "Go Ringcentral meeting",
-		"join meeting", "leave meeting", "go preset 1", "go preset 1", "go preset 2", "go preset 3",
-		"manual frame", "auto framing", "turn off tracking", "go tracking", "speaker tracking",
-		"camera zoom out","camera zoom out","camera zoom out", "zoom in image", "zoom in image",
-		"Pan to right site", "Pan to right site","Pan to right site",
-		"pan to left site", "pan to left site", "pan to left site",
-		"pan to up site", "pan to up site", "pan to up site",
-		"pan to down site","pan to down site","pan to down site",
-		"open camera", "open camera", "open camera",
-		"close camera", "close camera", "close camera", "close camera", "close camera", "close camera",
-		"mute microphone", "mute microphone", "unmute microphone","unmute microphone",
-		"speaker on","speaker on", "increase volume", "reduce volume", "reduce volume", "reduce volume",
-		"speak off","customize one", "customize one",
-		"customize two", "customize three",
-		"Scene One", "Scene One", "Scene Two", "Scene Three"};
+char *cmd_customer_en[] ={"Check Taipei", "check new york", "check new york",
+								 "Check San Francisco", "check phoenix",
+								 "check chicago", "Check tokyo", "set one point", "set one point"};

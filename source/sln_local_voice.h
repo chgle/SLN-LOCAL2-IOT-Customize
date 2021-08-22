@@ -42,7 +42,7 @@ extern "C" {
 #define ENABLE_DIALOGIC_1             (1)
 #define ENABLE_DIALOGIC_2_TEMPERATURE (1)
 #define ENABLE_DIALOGIC_2_TIMER       (1)
-#define ENABLE_CUSTOMER_CMD		      (1)	//b36932 enable customer command
+#define ENABLE_CUSTOMER_CMD      	  (1)
 
 #define NUM_APPS_EN                                                                               \
     (ENABLE_IOT + ENABLE_ELEVATOR + ENABLE_AUDIO + ENABLE_WASH + ENABLE_LED + ENABLE_DIALOGIC_1 + \
@@ -54,13 +54,13 @@ extern "C" {
 #define NUM_GROUPS    (NUM_APPS + 3)
 #define MAX_GROUPS    ((NUM_GROUPS > NUM_GROUPS_EN) ? NUM_GROUPS : NUM_GROUPS_EN)
 
-//B36932 Customer command app only
+//Customer command app only
 #define NUM_CUS_APPS_EN  (ENABLE_CUSTOMER_CMD)
 #define NUM_CUS_APPS (ENABLE_CUSTOMER_CMD)
 // groups: base, ww, cmd_iot, cmd_elevator, and so on
 #define NUM_CUS_GROUPS_EN (NUM_CUS_APPS_EN + 3) // add 1 for base group, add 1 for wake word, add 1 for the mapID
 #define NUM_CUS_GROUPS    (NUM_CUS_APPS + 3)
-#define MAX_CUS_GROUPS    ((NUM_GROUPS > NUM_GROUPS_EN) ? NUM_GROUPS : NUM_GROUPS_EN)
+#define MAX_CUS_GROUPS    ((NUM_CUS_GROUPS > NUM_CUS_GROUPS_EN) ? NUM_CUS_GROUPS : NUM_CUS_GROUPS_EN)
 
 #define NUM_INFERENCES_WW (MAX_INSTALLED_LANGUAGES) // WW in multiple languages
 
@@ -177,7 +177,7 @@ typedef enum _asr_inference
     ASR_CMD_DIALOGIC_1             = (ENABLE_DIALOGIC_1 << 6U),
     ASR_CMD_DIALOGIC_2_TEMPERATURE = (ENABLE_DIALOGIC_2_TEMPERATURE << 7U),
     ASR_CMD_DIALOGIC_2_TIMER       = (ENABLE_DIALOGIC_2_TIMER << 8U),
-	ASR_CMD_CUSTOMER				=(ENABLE_CUSTOMER_CMD << 9U)	//B36932
+	ASR_CMD_CUSTOMER 			   = (ENABLE_CUSTOMER_CMD << 9U)
 
 } asr_inference_t;
 
@@ -201,47 +201,25 @@ typedef enum _oob_dialog
     RESPONSE_2_TIMER,
 } oob_dialog_t;
 
-typedef enum __AVer_cmd
+typedef enum _customize_cmd
 {
-	Go_Zoom_meeting  = 0,
-	Go_Teams_meeting,
-	Go_Ringcentral_meeting,
-	Join_meeting,
-	Leave_meeting,
-	Go_preset_1,
-	Go_preset_2,
-	Go_preset_3,
-	Manual_frame,
-	Auto_framing,
-	Turn_off_tracking,
-	Go_Tracking ,
-	Speaker_Tracking,
-	Camera_zoom_out,
-	zoom_in_image,
-	Pan_to_right_site,
-	Pan_to_left_site,
-	Pan_to_up_site,
-	Pan_to_down_site,
-	ope_camera,
-	clos_camera,
-	mute_microphone,
-	unmute_microphone,
-	speaker_on,
-	increase_volume,
-	reduce_volume,
-	speak_off,
-	customize_one,
-	customize_two,
-	customize_thress,
+	Check_Taipei = 0,
+	Check_new_york,
+	Check_San_Francisco,
+	Check_Phoenix,
+	Check_Chicago,
+	Check_Tokyo,
+	set_one_point,
 	Customer_UNDEFINED_COMMAND
-} aver_cmd_t;
+
+} customize_cmd_t;
 
 typedef struct _oob_demo_control
 {
     asr_language_t language;
     oob_led_t ledCmd;
     oob_dialog_t dialogRes;
-    aver_cmd_t cmd;	//b36932
+    customize_cmd_t cmd;
     // DEVELOPERS: similarly with oob_led_t, add / customize each demo application
     // define oob_iot_t or oob_elevator_t or oob_audio_t or oob_wash_t for the demo #2 types
     // define oob_dialogic_cmd_t for the demo #3 type.

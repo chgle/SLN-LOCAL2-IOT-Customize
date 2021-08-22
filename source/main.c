@@ -631,6 +631,7 @@ void appTask(void *arg)
                 break;
             }
             case kCommandGeneric:
+            case kCommandCustomer:
             {
                 if (oob_demo_control.language == ASR_ENGLISH)
                 {
@@ -751,15 +752,6 @@ void appTask(void *arg)
                 }
 
                 break;
-            case kCommandCustomer:	//b36932 customer command detected
-
-            	configPRINTF(("\r\nCustomer Command Detected.\r\n"));
-            	switch(oob_demo_control.cmd) {
-            		default:
-                         configPRINTF(("CMD: %d\r\n", oob_demo_control.cmd));
-
-            	         break;
-            	}
             default:
                 break;
         }

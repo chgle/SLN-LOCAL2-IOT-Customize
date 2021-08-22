@@ -14,8 +14,8 @@
 .global oob_demo_zh_begin
 .global oob_demo_de_begin
 .global oob_demo_fr_begin
-.global customer_demo_zh_begin
 .global customer_demo_en_begin
+.global customer_demo_zh_begin
 
 oob_demo_en_begin:
 .incbin "./local_voice/oob_demo_en/oob_demo_en_pack_WithMapID.bin"
@@ -33,11 +33,10 @@ oob_demo_fr_begin:
 .incbin "./local_voice/oob_demo_fr/oob_demo_fr_pack_WithMapID.bin"
 oob_demo_fr_end:
 
-customer_demo_zh_begin:
-.incbin "./local_voice/customer_demo_zh/Aver_pack_WithMapID.bin"
-customer_demo_zh_end:
-
 customer_demo_en_begin:
-.incbin "./local_voice/customer_demo_en/Aver_en_pack_WithMapID.bin"
+.incbin "./local_voice/customer_demo_en/Customize_ASR_Model_en_pack_WithMapID.bin"
 customer_demo_en_end:
 
+customer_demo_zh_begin:
+.incbin "./local_voice/customer_demo_zh/Customize_ASR_Model_zh_pack_WithMapID.bin"
+customer_demo_zh_end:

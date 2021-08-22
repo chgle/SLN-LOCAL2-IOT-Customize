@@ -20,7 +20,7 @@
 #define NUMBER_OF_WASH_CMDS     5
 #define NUMBER_OF_LED_CMDS      5
 #define NUMBER_OF_DIALOGIC_CMDS 5
-#define NUMBER_OF_CUSTOMER_CMDS 33
+#define NUMBER_OF_CUSTOMER_CMDS 7
 
 static char *cmd_iot_zh[] = {"温度升高", "温度降低", "打开窗帘", "关上窗帘", "开灯", "关灯", "亮一点", "暗一点"};
 
@@ -79,31 +79,13 @@ static char *cmd_audio_de[] = {"anschalten",
 
 static char *cmd_wash_de[] = {"Feinwäsche", "Normalwäsche", "stark verschmutze Wäsche", "Weißwäsche", "abbrechen"};
 
-//B36932 for customer voice commands
-static char *cmd_customer_zh[] = {"开启zoom会议", "开启team会议", "开启Ringcentral会议",
-								"加入会议", "结束会议", "预设点1", "预设点2", "预设点3",
-								"手动框图", "自动框图", "关闭追踪", "开始追踪", "声音追踪",
-								"缩小影像", "放大影像", "右转摄影机", "左转摄影机", "摄影机向上", "摄影机向下",
-								"镜头打开", "镜头关闭", "麦克风静音", "麦克风收音",
-								"喇叭放音", "增大音量", "减小音量", "喇叭静音",
-								"自定义1", "自定义2", "自定义3",
-								"情景1", "情景2", "情景3"};
-//b36932 for commands display
-static char *cmd_customer_en[] = {"go zoom meeting", "go teams meeting", "Go Ringcentral meeting",
-		"join meeting", "leave meeting", "go preset 1", "go preset 2", "go preset 3",
-		"manual frame", "auto framing", "turn off tracking", "go tracking", "speaker tracking",
-		"camera zoom out", "zoom in image",
-		"Pan to right site",
-		"pan to left site",
-		"pan to up site",
-		"pan to down site",
-		"open camera",
-		"close camera",
-		"mute microphone",  "unmute microphone",
-		"speaker on", "increase volume", "reduce volume",
-		"speak off","customize one",
-		"customize two", "customize three",
-		"Scene One",  "Scene Two", "Scene Three"};
+static char *cmd_customer_en[] ={"Check Taipei", "check new york",
+								 "Check San Francisco", "check phoenix",
+								 "check chicago", "Check tokyo", "set one point"};
+
+static char *cmd_customer_zh[] ={"檢查台北", "檢查紐約", "檢查舊金山",
+								 "檢查鳳凰城", "檢查芝加哥", "檢查東京", "設定一個點" };
+
 
 char **get_cmd_strings(asr_language_t asrLang, asr_inference_t infCMDType)
 {
@@ -120,8 +102,8 @@ char **get_cmd_strings(asr_language_t asrLang, asr_inference_t infCMDType)
                 retString = cmd_audio_zh;
             else if (infCMDType == ASR_CMD_WASH)
                 retString = cmd_wash_zh;
-            else if (infCMDType == ASR_CMD_CUSTOMER)	//b36932 return customer command string
-            	retString = cmd_customer_zh;
+            else if (infCMDType == ASR_CMD_CUSTOMER)
+                 retString = cmd_customer_zh;
             break;
         case ASR_FRENCH:
             if (infCMDType == ASR_CMD_IOT)
@@ -146,8 +128,8 @@ char **get_cmd_strings(asr_language_t asrLang, asr_inference_t infCMDType)
                 retString = cmd_led_en;
             else if (infCMDType == ASR_CMD_DIALOGIC_1)
                 retString = cmd_dialogic_1_en;
-            else if (infCMDType == ASR_CMD_CUSTOMER)	//b36932 return customer command string
-                retString = cmd_customer_en;
+            else if (infCMDType == ASR_CMD_CUSTOMER)
+                 retString = cmd_customer_en;
             break;
         case ASR_GERMAN:
             if (infCMDType == ASR_CMD_IOT)
@@ -183,7 +165,7 @@ unsigned int get_cmd_number(asr_inference_t infCMDType)
         cmd_number = NUMBER_OF_LED_CMDS;
     else if (infCMDType == ASR_CMD_DIALOGIC_1)
         cmd_number = NUMBER_OF_DIALOGIC_CMDS;
-    else if (infCMDType == ASR_CMD_CUSTOMER)	//b36932 return customer command quantity
+    else if (infCMDType == ASR_CMD_CUSTOMER)	//return customer command quantity
     	cmd_number = NUMBER_OF_CUSTOMER_CMDS;
 
     return cmd_number;

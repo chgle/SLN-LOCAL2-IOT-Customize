@@ -31,7 +31,7 @@ typedef enum _audio_processing_states
     kMicUpdate,
     kVolumeUpdate,
     kTimeOut,
-	kCommandCustomer,	//B36932 for customer command
+	kCommandCustomer,
     kDefault
 } audio_processing_states_t;
 

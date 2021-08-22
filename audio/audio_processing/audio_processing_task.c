@@ -206,7 +206,6 @@ void audio_processing_task(void *pvParameters)
             //            if(xQueueSendToBack(g_xSampleQueue, cleanAudioBuff, 0) == errQUEUE_FULL)
             {
                 RGB_LED_SetColor(LED_COLOR_PURPLE);
-            	configPRINTF(("ERROR [errQUEUE_FULL]: ship audio to ASR failure\r\n")); //B36932
             }
 
             g_out_ptr             = g_audio_out;

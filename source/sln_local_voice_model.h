@@ -16,8 +16,7 @@ extern unsigned int oob_demo_de_begin;
 extern unsigned int oob_demo_fr_begin;
 extern unsigned int uCY_License_Begin;
 
-//B36932 ASR model point
-extern unsigned int customer_demo_zh_begin;
 extern unsigned int customer_demo_en_begin;
+extern unsigned int customer_demo_zh_begin;
 
 #endif /* SLN_LOCAL_VOICE_MODEL_H_ */

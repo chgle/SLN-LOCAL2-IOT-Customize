@@ -93,7 +93,7 @@ SHELL_COMMAND_DEFINE(changeto,
                      "            wash: Washing machine\r\n"
                      "            led: LED control (auto-enabling English)\r\n"
                      "            dialog: Dialogic commands for oven (auto-enabling English)\r\n"
-					 "			  customer: customer demo commands",
+                     "            customer: Customize voice commands",
                      sln_changeto_handler,
                      1);
 
@@ -297,6 +297,7 @@ static shell_status_t sln_changeto_handler(shell_handle_t shellHandle, int32_t a
 {
     int32_t status = kStatus_SHELL_Success;
     char *str;
+    asr_inference_t previous_ASR_demo;
 
     if (argc != 2)
     {
@@ -307,38 +308,36 @@ static shell_status_t sln_changeto_handler(shell_handle_t shellHandle, int32_t a
     }
     else
     {
+    	previous_ASR_demo = appAsrShellCommands.demo;
+
         str = argv[1];
 
         if (strcmp(str, "audio") == 0)
         {
             appAsrShellCommands.demo   = ASR_CMD_AUDIO;
             appAsrShellCommands.status = WRITE_READY;
-            //B36932 appAsrShellCommands.asrCfg = ASR_CFG_CMD_INFERENCE_ENGINE_CHANGED;
-            appAsrShellCommands.asrCfg = ASR_CFG_CMD_INFERENCE_ENGINE_CHANGED | ASR_CFG_DEMO_LANGUAGE_CHANGED ;//B36932
+            appAsrShellCommands.asrCfg = ASR_CFG_CMD_INFERENCE_ENGINE_CHANGED;
             configPRINTF(("Changing to Audio commands demo.\r\n"));
         }
         else if (strcmp(str, "iot") == 0)
         {
             appAsrShellCommands.demo   = ASR_CMD_IOT;
             appAsrShellCommands.status = WRITE_READY;
-            //B36932 appAsrShellCommands.asrCfg = ASR_CFG_CMD_INFERENCE_ENGINE_CHANGED;
-            appAsrShellCommands.asrCfg = ASR_CFG_CMD_INFERENCE_ENGINE_CHANGED | ASR_CFG_DEMO_LANGUAGE_CHANGED ;//B36932
+            appAsrShellCommands.asrCfg = ASR_CFG_CMD_INFERENCE_ENGINE_CHANGED;
             configPRINTF(("Changing to IoT commands demo.\r\n"));
         }
         else if (strcmp(str, "elevator") == 0)
         {
             appAsrShellCommands.demo   = ASR_CMD_ELEVATOR;
             appAsrShellCommands.status = WRITE_READY;
-            //B36932 appAsrShellCommands.asrCfg = ASR_CFG_CMD_INFERENCE_ENGINE_CHANGED;
-            appAsrShellCommands.asrCfg = ASR_CFG_CMD_INFERENCE_ENGINE_CHANGED | ASR_CFG_DEMO_LANGUAGE_CHANGED ;//B36932
+            appAsrShellCommands.asrCfg = ASR_CFG_CMD_INFERENCE_ENGINE_CHANGED;
             configPRINTF(("Changing to Elevator commands demo.\r\n"));
         }
         else if (strcmp(str, "wash") == 0)
         {
             appAsrShellCommands.demo   = ASR_CMD_WASH;
             appAsrShellCommands.status = WRITE_READY;
-            //B36932 appAsrShellCommands.asrCfg = ASR_CFG_CMD_INFERENCE_ENGINE_CHANGED;
-            appAsrShellCommands.asrCfg = ASR_CFG_CMD_INFERENCE_ENGINE_CHANGED | ASR_CFG_DEMO_LANGUAGE_CHANGED ;//B36932
+            appAsrShellCommands.asrCfg = ASR_CFG_CMD_INFERENCE_ENGINE_CHANGED;
             configPRINTF(("Changing to Washing Machine commands demo.\r\n"));
         }
         else if (strcmp(str, "led") == 0)
@@ -373,9 +372,13 @@ static shell_status_t sln_changeto_handler(shell_handle_t shellHandle, int32_t a
         }
 
         //B36932 force re-install language and inference engine
-        //appAsrShellCommands.multilingual = ASR_ENGLISH;
-        //appAsrShellCommands.asrCfg = ASR_CFG_CMD_INFERENCE_ENGINE_CHANGED | ASR_CFG_DEMO_LANGUAGE_CHANGED ;
-
+        if(previous_ASR_demo == ASR_CMD_CUSTOMER)
+        {
+             appAsrShellCommands.multilingual = ASR_ENGLISH;
+             appAsrShellCommands.asrCfg = ASR_CFG_CMD_INFERENCE_ENGINE_CHANGED | ASR_CFG_DEMO_LANGUAGE_CHANGED ;
+             //configPRINTF(("Change model to obb demo.\r\n"));
+             //configPRINTF(("asrCfg = %x\r\n",appAsrShellCommands.asrCfg));
+         }
 
         // notify main task
         xTaskNotifyFromISR(appTaskHandle, kDefault, eSetBits, NULL);
